@@ -61,7 +61,7 @@
 	int BUMP = 350;
 	int HIGH = 1420;
 	int PRE_HIGH = 4000;
-	int hold = 30;
+	int hold = 20;
 
 
 //////////////////////////
@@ -257,7 +257,7 @@
 	void Alex() // Caches preload (5) + Knocks 2 big balls (10)
 	{
 		waitForButton();
-	  moveStraight(1, 0, 1400); // maintenence and recalibrating needed...1400 worked
+	  moveStraight(1, 0, 1470); // maintenence and recalibrating needed...1400 worked
 		wait10Msec(30);
 		lift(HIGH);
 		holdArm();
@@ -272,11 +272,11 @@
 		moveStraight(-1, 0, 1400);
 		waitForButton();
 
-
+		/*
 		bool repeatBall = false;
-		for(int i = 0; i < 80; i++){
-			wait10Msec(1);
-			if(SensorValue[waitingButtonRed] == 1 || SensorValue[waitingButtonBlue] == 1){
+		ClearTimer(T1);
+		while(time1[T1] < 800) {
+			if(!(SensorValue[waitingButtonRed] == 0 && SensorValue[waitingButtonBlue] == 0)){
 				repeatBall = true;
 				break;
 			}
@@ -289,6 +289,11 @@
 			wait1Msec(300);
 			moveStraight(-1, 0, 580);
 		}
+		*/
+
+		wait10Msec(50);
+		lift(BARRIER);
+		holdArm();
 
 		moveStraight(1, 0, 950);
 		wait1Msec(300);
@@ -492,12 +497,31 @@ task intake()
 	}
 }
 
+bool hang = false;
 task solenoids()
 {
 	while(true)
 	{
 		if(!tomato){
-			SensorValue[catapult] = vexRT[Btn7U];
+			if(!hang){
+				if(vexRT[Btn7R] == 1){
+					hang = true;
+				}
+			}
+			else if(hang){
+				if(vexRT[Btn7L] == 1){
+					hang = false;
+				}
+			}
+			if(hang){
+				SensorValue[catapult] = 1;
+			}
+			else if(vexRT[Btn7U] == 1){
+					SensorValue[catapult] = 1;
+			}
+			else{
+				SensorValue[catapult] = 0;
+			}
 		}
 	}
 }
@@ -507,5 +531,12 @@ task autonTest(){
 }
 
 task usercontrol(){
-	StartTask(autonTest);
+	//StartTask(autonTest);
+
+
+	StartTask(drive);
+	StartTask(arm);
+	StartTask(solenoids);
+	StartTask(intake);
+
 }
