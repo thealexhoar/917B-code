@@ -1,9 +1,9 @@
 #pragma config(Sensor, in1,    topPot,         sensorPotentiometer)
 #pragma config(Sensor, in2,    botPot,         sensorPotentiometer)
-#pragma config(Motor,  port1,           leftFrontMotor, tmotorVex393, openLoop)
-#pragma config(Motor,  port4,           rightFrontMotor, tmotorVex393, openLoop)
-#pragma config(Motor,  port3,           rightBackMotor, tmotorVex393, openLoop, reversed)
-#pragma config(Motor,  port2,           leftBackMotor, tmotorVex393, openLoop, reversed)
+#pragma config(Motor,  port8,           leftFrontMotor, tmotorVex393, openLoop)
+#pragma config(Motor,  port2,           rightFrontMotor, tmotorVex393, openLoop)
+#pragma config(Motor,  port4,           rightBackMotor, tmotorVex393, openLoop, reversed)
+#pragma config(Motor,  port9,           leftBackMotor, tmotorVex393, openLoop, reversed)
 #pragma config(Motor,  port5,           armRightMotors,  tmotorVex393, openLoop)
 #pragma config(Motor,  port6,           armLeftMotors,  tmotorVex393, openLoop, reversed)
 #pragma config(Motor,  port9,           clawMotor,     tmotorVex393, openLoop)
@@ -39,7 +39,8 @@ float MAX_TOP = 2700, MIN_TOP = 1420;
 //                                      Functions																			 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-float cubeScaling(float inValue){
+float cubeScaling(float inValue)
+{
 		return pow(inValue, 3) / pow(127, 3);
 }
 /*
@@ -71,7 +72,9 @@ void lowerBotArm(int potValue = ARM_BOTTOM_DOWN){
 		motor[armBotMotors] = 0;
 }*/
 
-void forwardNoRamp(float x, float y, float time, float power = 100){
+
+void forwardNoRamp(float x, float y, float time, float power = 100)
+{
 				float jAxis = x * 0.5 + y * -0.5;
 				float kAxis = x * 0.5 + y * 0.5;
 
@@ -88,8 +91,8 @@ void forwardNoRamp(float x, float y, float time, float power = 100){
 
 }
 
-void turnNoRamp(float t, float time, float power = 80){
-
+void turnNoRamp(float t, float time, float power = 80)
+{
 		motor[rightFrontMotor] = t * power;
 		motor[leftBackMotor] = t * power * -1;
 		motor[leftFrontMotor] = t * power;
@@ -124,7 +127,8 @@ task autonomous()
 //                                 User Control Task																	//
 ////////////////////////////////////////////////////////////////////////////////////////
 
-task claw(){
+task claw()
+{
 
 		float clawMotorPower = 64;
 		int waitTime = 500;
@@ -153,20 +157,17 @@ task claw(){
 }
 
 
-task arm(){
+task arm()
+{
 	  float armPower = 80; //Power values
-		float armPos; //Potentiometer values
+		float armPos; 			 //Potentiometer values
 		int armDir = 0;
-		while(true){
+		while(true)
+		{
 				armDir = vexRT[Btn6U] - vexRT[Btn6D];
 				motor[armLeftMotors] = armDir * armPower;
 				motor[armRightMotors] = armDir * armPower;
-
-
-
-
 		}
-
 }
 
 // TODO: IMPLEMENT THRESHOLD VALUES
@@ -230,7 +231,8 @@ task drive()
 
 }
 
-task autonTest(){
+task autonTest()
+{
 		while(true){
 				if(vexRT[Btn7U] == 1){
 						forwardNoRamp(0,1,200);
@@ -248,7 +250,8 @@ task autonTest(){
 }
 
 
-task usercontrol() {
+task usercontrol()
+{
 		//StartTask(claw);
 		StartTask(drive);
 		StartTask(arm);
